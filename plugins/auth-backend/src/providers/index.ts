@@ -25,6 +25,7 @@ export * from './bitbucket';
 export * from './atlassian';
 export * from './aws-alb';
 export * from './saml';
+export * from './gcp-iap';
 
 export { factories as defaultAuthProviderFactories } from './factories';
 

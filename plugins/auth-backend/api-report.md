@@ -9,6 +9,7 @@ import { CatalogApi } from '@backstage/catalog-client';
 import { Config } from '@backstage/config';
 import { Entity } from '@backstage/catalog-model';
 import express from 'express';
+import { JsonValue } from '@backstage/types';
 import { JSONWebKey } from 'jose';
 import { Logger as Logger_2 } from 'winston';
 import { PluginDatabaseManager } from '@backstage/backend-common';
@@ -48,8 +49,8 @@ export type AtlassianProviderOptions = {
 };
 
 // @public
-export type AuthHandler<AuthResult> = (
-  input: AuthResult,
+export type AuthHandler<TAuthResult> = (
+  input: TAuthResult,
 ) => Promise<AuthHandlerResult>;
 
 // @public
@@ -233,6 +234,11 @@ export const createBitbucketProvider: (
   options?: BitbucketProviderOptions | undefined,
 ) => AuthProviderFactory;
 
+// @public
+export function createGcpIapProvider(
+  options: GcpIapProviderOptions,
+): AuthProviderFactory;
+
 // Warning: (ae-missing-release-tag) "createGithubProvider" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
 //
 // @public (undocumented)
@@ -313,6 +319,26 @@ export const encodeState: (state: OAuthState) => string;
 //
 // @public (undocumented)
 export const ensuresXRequestedWith: (req: express.Request) => boolean;
+
+// @public
+export type GcpIapProviderOptions = {
+  authHandler?: AuthHandler<GcpIapResult>;
+  signIn: {
+    resolver: SignInResolver<GcpIapResult>;
+  };
+};
+
+// @public
+export type GcpIapResult = {
+  iapToken: GcpIapTokenInfo;
+};
+
+// @public
+export type GcpIapTokenInfo = {
+  sub: string;
+  email: string;
+  [key: string]: JsonValue;
+};
 
 // Warning: (ae-forgotten-export) The symbol "TokenParams" needs to be exported by the entry point index.d.ts
 // Warning: (ae-missing-release-tag) "getEntityClaims" is exported by the package, but it is missing a release tag (@alpha, @beta, @public, or @internal)
@@ -630,14 +656,14 @@ export type SamlProviderOptions = {
 };
 
 // @public
-export type SignInInfo<AuthResult> = {
+export type SignInInfo<TAuthResult> = {
   profile: ProfileInfo;
-  result: AuthResult;
+  result: TAuthResult;
 };
 
 // @public
-export type SignInResolver<AuthResult> = (
-  info: SignInInfo<AuthResult>,
+export type SignInResolver<TAuthResult> = (
+  info: SignInInfo<TAuthResult>,
   context: {
     tokenIssuer: TokenIssuer;
     catalogIdentityClient: CatalogIdentityClient;
