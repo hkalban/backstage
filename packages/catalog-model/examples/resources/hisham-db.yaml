@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: hisham-db
+  description: Stores hisham's details
+spec:
+  type: database
+  owner: team-a
+  system: hisham
